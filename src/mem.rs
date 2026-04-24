@@ -17,6 +17,9 @@ pub trait BitRegister: Unsigned + BitOps {
 	const MASK: u8 = bits_of::<Self>() as u8 - 1;
 	/// The literal `!0`.
 	const ALL: Self;
+
+	fn zero() -> &'static Self;
+	fn one() -> &'static Self;
 }
 
 /// Marks certain fundamentals as processor registers.
@@ -24,6 +27,15 @@ macro_rules! register {
 	($($t:ty),+ $(,)?) => { $(
 		impl BitRegister for $t {
 			const ALL: Self = !0;
+			fn zero() -> &'static Self {
+				static ZERO: $t = 0;
+				&ZERO
+			}
+
+			fn one() -> &'static Self {
+				static ONE: $t = 1;
+				&ONE
+			}
 		}
 	)+ };
 }
@@ -38,6 +50,15 @@ This implementation is not present on targets with 32-bit processor words.
 #[cfg(target_pointer_width = "64")]
 impl BitRegister for u64 {
 	const ALL: Self = !0;
+	fn zero() -> &'static Self {
+		static ZERO: u64 = 0;
+		&ZERO
+	}
+
+	fn one() -> &'static Self {
+		static ONE: u64 = 1;
+		&ONE
+	}
 }
 
 register!(usize);

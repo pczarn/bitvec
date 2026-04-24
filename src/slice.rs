@@ -12,12 +12,10 @@ use tap::Pipe;
 #[cfg(feature = "alloc")]
 use tap::Tap;
 use wyz::{
-	bidi::BidiIterator,
-	comu::{
+	Address, bidi::BidiIterator, comu::{
 		Const,
 		Mut,
-	},
-	range::RangeExt,
+	}, range::RangeExt
 };
 
 #[cfg(feature = "alloc")]
@@ -245,6 +243,13 @@ where
 				.span_unchecked(1)
 				.into_bitslice_ref()
 		}
+	}
+
+	/// Constructs a `&BitSlice` reference over a single bit from the given boolean.
+	pub fn from_bool(
+		elem: bool
+	) -> &'static Self {
+		Self::from_element(if elem { T::one() } else { T::zero() })
 	}
 
 	/// Constructs an exclusive `&mut BitSlice` reference over a single bit

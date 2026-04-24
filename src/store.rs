@@ -41,6 +41,9 @@ pub trait BitStore: 'static + Debug {
 	/// The zero constant.
 	const ZERO: Self;
 
+	fn zero() -> &'static Self;
+	fn one() -> &'static Self;
+
 	/// Wraps a raw memory value as a `BitStore` type.
 	fn new(value: Self::Mem) -> Self;
 
@@ -109,6 +112,16 @@ macro_rules! store {
 
 			const ZERO: Self = 0;
 
+			fn zero() -> &'static Self {
+				static ZERO: $base = 0;
+				&ZERO
+			}
+
+			fn one() -> &'static Self {
+				static ONE: $base = 1;
+				&ONE
+			}
+
 			#[inline]
 			fn new(value: Self::Mem) -> Self { value }
 
@@ -137,6 +150,16 @@ macro_rules! store {
 
 			const ZERO: Self = <Self as BitSafe>::ZERO;
 
+			fn zero() -> &'static Self {
+				static ZERO: $safe = <$safe>::new(0);
+				&ZERO
+			}
+
+			fn one() -> &'static Self {
+				static ONE: $safe = <$safe>::new(0);
+				&ONE
+			}
+
 			#[inline]
 			fn new(value: Self::Mem) -> Self { <Self>::new(value) }
 
@@ -163,6 +186,14 @@ macro_rules! store {
 			type Unalias = Self;
 
 			const ZERO: Self = Self::new(0);
+
+			fn zero() -> &'static Self {
+				unimplemented!()
+			}
+
+			fn one() -> &'static Self {
+				unimplemented!()
+			}
 
 			#[inline]
 			fn new(value: Self::Mem) -> Self { <Self>::new(value) }
@@ -209,6 +240,16 @@ macro_rules! atomic {
 				type Unalias = Self;
 
 				const ZERO: Self = <Self>::new(0);
+
+				fn zero() -> &'static Self {
+					static ZERO: $atom = <$atom>::new(0);
+					&ZERO
+				}
+
+				fn one() -> &'static Self {
+					static ONE: $atom = <$atom>::new(1);
+					&ONE
+				}				
 
 				#[inline]
 				fn new(value: Self::Mem) -> Self { <Self>::new(value) }
